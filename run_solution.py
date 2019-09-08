@@ -11,7 +11,7 @@ def filter_orders(orders):
     orders = orders[(orders['pickup_to']>=360) 
                     & (orders['dropoff_to'] >=360) 
                     & (orders['payment'] > 0) 
-                    & (orders['dropoff_to'] >= orders['pickup_to'])]
+                    & (orders['dropoff_to'] >= orders['pickup_from'])]
     return orders
 
 
