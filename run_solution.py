@@ -1,7 +1,5 @@
 import json
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 from tqdm import tqdm
 import sys
