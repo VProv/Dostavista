@@ -61,7 +61,7 @@ def greedy_courier(start_position, visited_nodes, money, end2start, end2start_ti
             metric_from_ends_to_end[:, id_] = -10e5
             break
             
-        if metric_first[id_] < -200:
+        if metric_first[id_] < -100:
             break
         #elif pick_time < pick_from[id_]: # Let's wait
         #    wait_pick = pick_from[id_] - pick_time
@@ -174,9 +174,14 @@ def main(orders_path, output_path):
     pick_to = orders['pickup_to'].values
     
     
+    # CENTER
+    CENTER = [210,130]
+    couriers_distance_from_center = manh_distance(couriers['location_x'],couriers['location_y'], CENTER[0], CENTER[1]).values
+    argsort = np.argsort(couriers_distance_from_center)[::-1]
+    
     paths, times = [], []
     visited_nodes = set()
-    for start_position in tqdm(couriers[['location_x', 'location_y']].values):
+    for start_position in tqdm(couriers[['location_x', 'location_y']].values[argsort]):
         path, time, visited_nodes = greedy_courier(start_position, visited_nodes, 
                                                   money, end2start, end2start_time, drop_coordinates, pick_coordinates, time_from_start_to_end, time_from_ends_to_starts, time_from_ends_to_end, metric_from_ends_to_end, drop_from, drop_to, pick_from, pick_to)
         paths.append(path)
@@ -186,7 +191,7 @@ def main(orders_path, output_path):
     pickup_point_ids = orders['pickup_point_id'].values
     dropoff_point_ids = orders['dropoff_point_id'].values
     actions = []
-    for path, courier_id in zip(paths, np.arange(1,301)):
+    for path, courier_id in zip(paths, couriers['courier_id'].values[argsort]):
         for id_ in path:
             actions.append([courier_id, "pickup", order_ids[id_], pickup_point_ids[id_]])
             actions.append([courier_id, "dropoff", order_ids[id_], dropoff_point_ids[id_]])
